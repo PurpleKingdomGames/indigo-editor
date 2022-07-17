@@ -17,10 +17,18 @@ object Main extends TyrianApp[Msg, Model]:
     case Msg.Decrement => (model - 1, Cmd.None)
 
   def view(model: Model): Html[Msg] =
-    div(
-      button(onClick(Msg.Decrement))("-"),
-      div(model.toString),
-      button(onClick(Msg.Increment))("+")
+    div(`class` := "container")(
+      div(`class` := "row")(
+        div(`class` := "col bodyText", styles("text-align" -> "right"))(
+          button(onClick(Msg.Decrement))(text("-"))
+        ),
+        div(`class` := "col bodyText", styles("text-align" -> "center"))(
+          text(model.toString)
+        ),
+        div(`class` := "col bodyText", styles("text-align" -> "left"))(
+          button(onClick(Msg.Increment))(text("+"))
+        )
+      )
     )
 
   def subscriptions(model: Model): Sub[IO, Msg] =

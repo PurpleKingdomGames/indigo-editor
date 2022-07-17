@@ -28,12 +28,6 @@ lazy val commonSettings: Seq[sbt.Def.Setting[_]] = Seq(
   autoAPIMappings    := true
 )
 
-lazy val bootstrap =
-  (project in file("bootstrap"))
-    .enablePlugins(ScalaJSPlugin)
-    .settings(commonSettings: _*)
-    .settings(name := "bootstrap")
-
 lazy val electron =
   (project in file("electron"))
     .enablePlugins(ScalaJSPlugin)
@@ -56,7 +50,6 @@ lazy val indigo =
 
 lazy val exampleProjects: List[String] =
   List(
-    "bootstrap",
     "electron",
     "indigo"
   )
