@@ -32,14 +32,8 @@ lazy val electron =
   (project in file("electron"))
     .enablePlugins(ScalaJSPlugin)
     .settings(commonSettings: _*)
-    .settings(name := "electron")
-
-lazy val indigo =
-  (project in file("indigo"))
-    .enablePlugins(ScalaJSPlugin)
-    .settings(commonSettings: _*)
     .settings(
-      name := "indigo-bridge",
+      name := "electron",
       libraryDependencies ++= Seq(
         "io.indigoengine" %%% "tyrian-indigo-bridge" % Dependancies.tyrianVersion,
         "io.indigoengine" %%% "indigo"            % Dependancies.indigoVersion,
@@ -50,8 +44,7 @@ lazy val indigo =
 
 lazy val exampleProjects: List[String] =
   List(
-    "electron",
-    "indigo"
+    "electron"
   )
 
 lazy val indigoEditorProject =
