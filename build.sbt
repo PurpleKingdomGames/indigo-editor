@@ -10,7 +10,7 @@ ThisBuild / scalafixDependencies += "com.github.liancheng" %% "organize-imports"
 lazy val scala3Version = "3.1.2"
 
 lazy val commonSettings: Seq[sbt.Def.Setting[_]] = Seq(
-  version      := Dependancies.tyrianVersion,
+  version      := "0.0.1",
   scalaVersion := scala3Version,
   organization := "io.indigoengine",
   libraryDependencies ++= Seq(
@@ -28,12 +28,12 @@ lazy val commonSettings: Seq[sbt.Def.Setting[_]] = Seq(
   autoAPIMappings    := true
 )
 
-lazy val electron =
-  (project in file("electron"))
+lazy val editor =
+  (project in file("editor"))
     .enablePlugins(ScalaJSPlugin)
     .settings(commonSettings: _*)
     .settings(
-      name := "electron",
+      name := "editor",
       libraryDependencies ++= Seq(
         "io.indigoengine" %%% "tyrian-indigo-bridge" % Dependancies.tyrianVersion,
         "io.indigoengine" %%% "indigo"            % Dependancies.indigoVersion,
@@ -41,11 +41,6 @@ lazy val electron =
         "io.indigoengine" %%% "indigo-json-circe" % Dependancies.indigoVersion
       )
     )
-
-lazy val exampleProjects: List[String] =
-  List(
-    "electron"
-  )
 
 lazy val indigoEditorProject =
   (project in file("."))
@@ -65,13 +60,9 @@ lazy val indigoEditorProject =
     .settings(
       logo := s"Indigo Editor (v${version.value})",
       usefulTasks := Seq(
-        UsefulTask("", "buildExamples", "Cleans and builds all examples"),
-        UsefulTask("", "cleanAll", "Cleans all examples"),
-        UsefulTask("", "compileAll", "Compiles all examples"),
-        UsefulTask("", "testAll", "Tests all examples"),
-        UsefulTask("", "fastOptAll", "Compiles all examples to JS"),
+        UsefulTask("b", "editor/fastLinkJS", "Build"),
         UsefulTask("", "code", "Launch VSCode")
-      ) ++ makeCmds(exampleProjects),
+      ),
       logoColor        := scala.Console.MAGENTA,
       aliasColor       := scala.Console.BLUE,
       commandColor     := scala.Console.CYAN,
@@ -80,48 +71,3 @@ lazy val indigoEditorProject =
 
 lazy val code =
   taskKey[Unit]("Launch VSCode in the current directory")
-
-def makeCmds(names: List[String]): Seq[UsefulTask] =
-  names.zipWithIndex.map { case (n, i) =>
-    val cmd =
-      List(
-        s"$n/clean",
-        s"$n/fastOptJS"
-      ).mkString(";", ";", "")
-
-    UsefulTask("build" + (i + 1), cmd, n)
-  }.toSeq
-
-// Top level commands
-def applyCommand(projects: List[String], command: String): String =
-  projects.map(p => p + "/" + command).mkString(";", ";", "")
-
-def applyToAll(command: String): String =
-  List(
-    applyCommand(exampleProjects, command)
-  ).mkString
-
-addCommandAlias(
-  "cleanAll",
-  applyToAll("clean")
-)
-addCommandAlias(
-  "compileAll",
-  applyToAll("compile")
-)
-addCommandAlias(
-  "testAll",
-  applyToAll("test")
-)
-addCommandAlias(
-  "fastOptAll",
-  applyToAll("fastOptJS")
-)
-addCommandAlias(
-  "buildExamples",
-  List(
-    "cleanAll",
-    "compileAll",
-    "fastOptAll"
-  ).mkString(";", ";", "")
-)

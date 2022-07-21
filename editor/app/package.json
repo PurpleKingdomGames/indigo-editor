@@ -1,7 +1,7 @@
 {
-  "name": "tyrian-electron",
+  "name": "indigo-editor",
   "version": "1.0.0",
-  "description": "Tyrian Electron App",
+  "description": "Indigo Editor",
   "main": "main.js",
   "scripts": {
     "start": "npx electron ."
