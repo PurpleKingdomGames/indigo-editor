@@ -1,4 +1,4 @@
-package example.game
+package indigoeditor.game
 
 import indigo.*
 import indigo.scenes.*

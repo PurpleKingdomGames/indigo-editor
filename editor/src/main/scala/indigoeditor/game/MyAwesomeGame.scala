@@ -1,4 +1,4 @@
-package example.game
+package indigoeditor.game
 
 import cats.effect.IO
 import indigo.*

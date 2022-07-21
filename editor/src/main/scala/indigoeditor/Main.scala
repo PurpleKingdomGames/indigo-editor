@@ -1,7 +1,7 @@
-package example
+package indigoeditor
 
 import cats.effect.IO
-import example.game.MyAwesomeGame
+import indigoeditor.game.MyAwesomeGame
 import tyrian.Html.*
 import tyrian.*
 import tyrian.cmds.Logger
@@ -126,7 +126,11 @@ object Main extends TyrianApp[Msg, Model]:
 //     def +(other: Int): Model = i + other
 //     def -(other: Int): Model = i - other
 
-final case class Model(count: Int, bridge: TyrianIndigoBridge[IO, String], field: String):
+final case class Model(
+    count: Int,
+    bridge: TyrianIndigoBridge[IO, String],
+    field: String
+):
   def increment: Model = this.copy(count = count + 1)
   def decrement: Model = this.copy(count = count - 1)
 
@@ -138,5 +142,5 @@ enum Msg:
   case Increment
   case Decrement
   case NewContent(content: String)
-  case StartIndigo                
-  case IndigoReceive(msg: String) 
+  case StartIndigo
+  case IndigoReceive(msg: String)
