@@ -16,11 +16,6 @@ lazy val commonSettings: Seq[sbt.Def.Setting[_]] = Seq(
   libraryDependencies ++= Seq(
     "org.scalameta" %%% "munit" % "0.7.29" % Test
   ),
-  libraryDependencies ++= Seq(
-    "io.indigoengine" %%% "tyrian-io" % Dependancies.tyrianVersion
-  ),
-  testFrameworks += new TestFramework("munit.Framework"),
-  scalaJSLinkerConfig ~= { _.withModuleKind(ModuleKind.CommonJSModule) },
   crossScalaVersions := Seq(scala3Version),
   scalafixOnCompile  := true,
   semanticdbEnabled  := true,
@@ -35,11 +30,48 @@ lazy val editor =
     .settings(
       name := "editor",
       libraryDependencies ++= Seq(
+        "io.indigoengine" %%% "tyrian-io" % Dependancies.tyrianVersion,
         "io.indigoengine" %%% "tyrian-indigo-bridge" % Dependancies.tyrianVersion,
         "io.indigoengine" %%% "indigo"            % Dependancies.indigoVersion,
         "io.indigoengine" %%% "indigo-extras"     % Dependancies.indigoVersion,
         "io.indigoengine" %%% "indigo-json-circe" % Dependancies.indigoVersion
+      ),
+      scalaJSLinkerConfig ~= { _.withModuleKind(ModuleKind.ESModule) }
+    )
+
+lazy val server =
+  project
+    .settings(commonSettings: _*)
+    .settings(
+      name := "server",
+      libraryDependencies ++= Seq(
+        "org.http4s" %% "http4s-ember-server" % Dependancies.http4sVersion,
+        "org.http4s" %% "http4s-ember-client" % Dependancies.http4sVersion,
+        "org.http4s" %% "http4s-circe"        % Dependancies.http4sVersion,
+        "org.http4s" %% "http4s-dsl"          % Dependancies.http4sVersion,
+        "io.circe"   %% "circe-generic"       % Dependancies.circeVersion,
+        "org.typelevel" %% "munit-cats-effect-3" % Dependancies.munitCatsEffectVersion % Test,
+        "ch.qos.logback"   % "logback-classic" % Dependancies.logbackVersion,
+        "io.indigoengine" %% "tyrian"          % Dependancies.tyrianVersion
       )
+    )
+
+// This is just here for reference for now. Should remove later.
+lazy val spa =
+  project
+    .enablePlugins(ScalaJSPlugin)
+    .enablePlugins(ScalaJSBundlerPlugin)
+    .settings(commonSettings: _*)
+    .settings(
+      name := "SPA",
+      scalaJSUseMainModuleInitializer := true,
+      scalaJSLinkerConfig ~= { _.withModuleKind(ModuleKind.CommonJSModule) },
+      libraryDependencies ++= Seq(
+        "io.indigoengine" %%% "tyrian-io" % Dependancies.tyrianVersion
+      ),
+      // Source maps seem to be broken with bundler
+      Compile / fastOptJS / scalaJSLinkerConfig ~= { _.withSourceMap(false) },
+      Compile / fullOptJS / scalaJSLinkerConfig ~= { _.withSourceMap(false) }
     )
 
 lazy val indigoEditorProject =
@@ -68,6 +100,7 @@ lazy val indigoEditorProject =
       commandColor     := scala.Console.CYAN,
       descriptionColor := scala.Console.WHITE
     )
+    .aggregate(editor, server, spa)
 
 lazy val code =
   taskKey[Unit]("Launch VSCode in the current directory")
