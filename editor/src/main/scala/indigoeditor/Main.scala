@@ -30,7 +30,22 @@ object Main extends TyrianApp[Msg, Model]:
 
       val request =
         Http.send[IO, Response, Msg](
-          Request.get("http://localhost:8080/generate"),
+          Request.get("http://localhost:12345/generate"),
+          decoder
+        )
+
+      (model, request)
+
+    case Msg.RunProject =>
+      val decoder =
+        Decoder[Msg](
+          r => Msg.ServerResponse(r.status.code, r.body),
+          e => Msg.ServerResponse(500, e.toString)
+        )
+
+      val request =
+        Http.send[IO, Response, Msg](
+          Request.get("http://localhost:12345/run"),
           decoder
         )
 
@@ -48,7 +63,8 @@ object Main extends TyrianApp[Msg, Model]:
   def view(model: Model): Html[Msg] =
     div(`class` := "container")(
       h1("Indigo Editor"),
-      button(onClick(Msg.GenerateProject))("Generate project"),
+      button(onClick(Msg.GenerateProject))("Generate"),
+      button(onClick(Msg.RunProject))("Run"),
       p("server response:"),
       code(model.serverResponse)
     )
@@ -66,4 +82,5 @@ enum Msg:
   case NoOp
   case Log(message: String)
   case GenerateProject
+  case RunProject
   case ServerResponse(code: Int, body: String)

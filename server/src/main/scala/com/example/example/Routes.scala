@@ -56,4 +56,14 @@ object Routes:
             Header.Raw(CIString("Access-Control-Allow-Origin"), "*")
           )
         } yield r
+
+      case GET -> Root / "run" =>
+        for {
+          t <- Async[F].realTime
+          r <- Ok(
+            s"One day, this will run something. (at: $t)",
+            `Content-Type`(MediaType.text.plain),
+            Header.Raw(CIString("Access-Control-Allow-Origin"), "*")
+          )
+        } yield r
     }
