@@ -21,35 +21,26 @@ object Main extends TyrianApp[Msg, Model]:
     case Msg.Log(msg) =>
       (model, Logger.info(msg))
 
-    case Msg.GenerateProject =>
+    case Msg.BuildAndRun =>
       val decoder =
         Decoder[Msg](
           r => Msg.ServerResponse(r.status.code, r.body),
           e => Msg.ServerResponse(500, e.toString)
         )
 
-      val request =
+      val build =
         Http.send[IO, Response, Msg](
           Request.get("http://localhost:12345/generate"),
           decoder
         )
 
-      (model, request)
-
-    case Msg.RunProject =>
-      val decoder =
-        Decoder[Msg](
-          r => Msg.ServerResponse(r.status.code, r.body),
-          e => Msg.ServerResponse(500, e.toString)
-        )
-
-      val request =
+      val run =
         Http.send[IO, Response, Msg](
           Request.get("http://localhost:12345/run"),
           decoder
         )
 
-      (model, request)
+      (model, build |+| run)
 
     case Msg.ServerResponse(code, body) =>
       val msg: String =
@@ -58,15 +49,12 @@ object Main extends TyrianApp[Msg, Model]:
         |$body
         """.stripMargin
 
-      (model.copy(serverResponse = msg), Cmd.None)
+      (model, Logger.info(msg))
 
   def view(model: Model): Html[Msg] =
     div(`class` := "container")(
       h1("Indigo Editor"),
-      button(onClick(Msg.GenerateProject))("Generate"),
-      button(onClick(Msg.RunProject))("Run"),
-      p("server response:"),
-      code(model.serverResponse)
+      button(onClick(Msg.BuildAndRun))("Build & Run")
     )
 
   def subscriptions(model: Model): Sub[IO, Msg] =
@@ -81,6 +69,5 @@ object Model:
 enum Msg:
   case NoOp
   case Log(message: String)
-  case GenerateProject
-  case RunProject
+  case BuildAndRun
   case ServerResponse(code: Int, body: String)
