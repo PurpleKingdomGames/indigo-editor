@@ -52,7 +52,8 @@ lazy val server =
         "io.circe"   %% "circe-generic"       % Dependancies.circeVersion,
         "org.typelevel" %% "munit-cats-effect-3" % Dependancies.munitCatsEffectVersion % Test,
         "ch.qos.logback"   % "logback-classic" % Dependancies.logbackVersion,
-        "io.indigoengine" %% "tyrian"          % Dependancies.tyrianVersion
+        "io.indigoengine" %% "tyrian"          % Dependancies.tyrianVersion,
+        "com.lihaoyi"     %% "os-lib"          % Dependancies.osLib
       )
     )
 
