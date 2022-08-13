@@ -8,15 +8,17 @@ import $ivy.`io.indigoengine::mill-indigo:0.13.1-SNAPSHOT`, millindigo._
 
 import indigoplugin.ElectronInstall
 
+import $file.indigoutils
+
 object mygame extends ScalaJSModule with MillIndigo {
   def scalaVersion   = "3.1.3"
   def scalaJSVersion = "1.10.1"
 
   val gameAssetsDirectory: os.Path     = os.pwd / "assets"
   val showCursor: Boolean              = true
-  val title: String                    = "My Game - Made with Indigo"
-  val windowStartWidth: Int            = 550
-  val windowStartHeight: Int           = 400
+  val title: String                    = indigoutils.title // "My Game - Made with Indigo"
+  val windowStartWidth: Int            = indigoutils.width // 550
+  val windowStartHeight: Int           = indigoutils.height // 400
   val disableFrameRateLimit: Boolean   = false
   val electronInstall: ElectronInstall = ElectronInstall.Version("^18.0.0")
   val backgroundColor: String          = "black"
