@@ -30,7 +30,7 @@ object Routes:
       case request @ GET -> Root / "spa.js" =>
         val spa = fs2.io.file.Path(
           "."
-        ) / "spa" / "target" / "scala-3.1.2" / "scalajs-bundler" / "main" / "spa-fastopt-bundle.js"
+        ) / "spa" / "target" / "scala-3.1.3" / "scalajs-bundler" / "main" / "spa-fastopt-bundle.js"
         StaticFile
           .fromPath(spa.absolute, Some(request))
           .getOrElseF(NotFound(spa.absolute.toString))
