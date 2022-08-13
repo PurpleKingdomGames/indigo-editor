@@ -92,7 +92,8 @@ lazy val indigoEditorProject =
     .settings(
       logo := s"Indigo Editor (v${version.value})",
       usefulTasks := Seq(
-        UsefulTask("b", "editor/fastLinkJS", "Build"),
+        UsefulTask("b", "editor/fastLinkJS", "Build the editor frontend"),
+        UsefulTask("start", "server/run", "Run the editor service"),
         UsefulTask("", "code", "Launch VSCode")
       ),
       logoColor        := scala.Console.MAGENTA,
