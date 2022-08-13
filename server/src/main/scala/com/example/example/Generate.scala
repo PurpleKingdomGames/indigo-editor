@@ -4,8 +4,8 @@ import cats.effect.Async
 
 object Generate:
 
-  def gen[F[_]: Async]: F[String] = Async[F].delay {
-    val projectDir = os.pwd / ".indigo-editor" / "indigo-editor-scratch"
+  def gen[F[_]: Async](buildPath: os.Path): F[String] = Async[F].delay {
+    val projectDir = buildPath
 
     println(">> Build dir is: " + projectDir)
 
@@ -22,5 +22,5 @@ object Generate:
 
     os.copy.over(from, to, createFolders)
 
-    "All done"
+    "Done generating."
   }

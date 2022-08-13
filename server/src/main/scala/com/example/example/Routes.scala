@@ -16,6 +16,8 @@ import java.io.File
 
 object Routes:
 
+  val buildPath: os.Path = os.pwd / ".indigo-editor" / "indigo-editor-scratch"
+
   def routes[F[_]: Async: Files](ssr: SSR[F]): HttpRoutes[F] =
     val dsl = new Http4sDsl[F] {}
     import dsl.*
@@ -50,7 +52,7 @@ object Routes:
       case GET -> Root / "generate" =>
         for {
           t <- Async[F].realTime
-          b <- Generate.gen
+          b <- Generate.gen(buildPath)
           r <- Ok(
             s"$b. (at: $t)",
             `Content-Type`(MediaType.text.plain),
@@ -61,6 +63,7 @@ object Routes:
       case GET -> Root / "run" =>
         for {
           t <- Async[F].realTime
+          b <- Run.run(buildPath)
           r <- Ok(
             s"One day, this will run something. (at: $t)",
             `Content-Type`(MediaType.text.plain),
