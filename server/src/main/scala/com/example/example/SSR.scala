@@ -3,8 +3,8 @@ package com.example.example
 import cats.Applicative
 import cats.implicits.*
 import org.http4s.EntityEncoder
-import tyrian.*
 import tyrian.Html.*
+import tyrian.*
 
 trait SSR[F[_]]:
   def render(n: SSR.Input): F[SSR.Output]

@@ -1,32 +1,39 @@
 package com.example.example
 
-import cats.effect.Sync
+import cats.effect.Async
 import cats.implicits.*
-import org.http4s.HttpRoutes
-import org.http4s.dsl.Http4sDsl
+import fs2.io.file.Files
 import org.http4s.Header
-import org.http4s.headers.`Content-Type`
+import org.http4s.HttpRoutes
 import org.http4s.MediaType
 import org.http4s.StaticFile
-import java.io.File
-import fs2.io.file.Files
+import org.http4s.dsl.Http4sDsl
+import org.http4s.headers.`Content-Type`
+import org.typelevel.ci._
 import tyrian.Tyrian
+
+import java.io.File
 
 object Routes:
 
-  def routes[F[_]: Sync: Files](ssr: SSR[F]): HttpRoutes[F] =
+  def routes[F[_]: Async: Files](ssr: SSR[F]): HttpRoutes[F] =
     val dsl = new Http4sDsl[F] {}
     import dsl.*
 
     HttpRoutes.of[F] {
       case GET -> Root =>
-        Ok(Tyrian.render(true, HomePage.page), `Content-Type`(MediaType.text.html))
+        Ok(
+          Tyrian.render(true, HomePage.page),
+          `Content-Type`(MediaType.text.html)
+        )
 
       case request @ GET -> Root / "spa.js" =>
         val spa = fs2.io.file.Path(
           "."
         ) / "spa" / "target" / "scala-3.1.2" / "scalajs-bundler" / "main" / "spa-fastopt-bundle.js"
-        StaticFile.fromPath(spa.absolute, Some(request)).getOrElseF(NotFound(spa.absolute.toString))
+        StaticFile
+          .fromPath(spa.absolute, Some(request))
+          .getOrElseF(NotFound(spa.absolute.toString))
 
       case GET -> Root / "ssr" / in =>
         for {
@@ -39,4 +46,14 @@ object Routes:
           out  <- ssr.render
           resp <- Ok(out.toHtml, `Content-Type`(MediaType.text.html))
         } yield resp
+
+      case GET -> Root / "generate" =>
+        for {
+          t <- Async[F].realTime
+          r <- Ok(
+            s"One day, this will generate something. (at: $t)",
+            `Content-Type`(MediaType.text.plain),
+            Header.Raw(CIString("Access-Control-Allow-Origin"), "*")
+          )
+        } yield r
     }

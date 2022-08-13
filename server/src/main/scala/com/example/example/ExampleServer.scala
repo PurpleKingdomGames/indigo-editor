@@ -1,6 +1,7 @@
 package com.example.example
 
-import cats.effect.{Async, Resource}
+import cats.effect.Async
+import cats.effect.Resource
 import cats.syntax.all.*
 import com.comcast.ip4s.*
 import fs2.Stream
