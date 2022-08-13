@@ -50,8 +50,9 @@ object Routes:
       case GET -> Root / "generate" =>
         for {
           t <- Async[F].realTime
+          b <- Generate.gen
           r <- Ok(
-            s"One day, this will generate something. (at: $t)",
+            s"$b. (at: $t)",
             `Content-Type`(MediaType.text.plain),
             Header.Raw(CIString("Access-Control-Allow-Origin"), "*")
           )
