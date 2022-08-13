@@ -23,8 +23,8 @@ object ExampleServer:
       exitCode <- Stream.resource(
         EmberServerBuilder
           .default[F]
-          .withHost(ipv4"0.0.0.0")
-          .withPort(port"8080")
+          .withHost(Host.fromString("localhost").getOrElse(ipv4"0.0.0.0"))
+          .withPort(port"12345")
           .withHttpApp(finalHttpApp)
           .build >>
           Resource.eval(Async[F].never)
