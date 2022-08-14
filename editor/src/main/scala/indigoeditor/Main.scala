@@ -52,10 +52,16 @@ object Main extends TyrianApp[Msg, Model]:
       (model, Logger.info(msg))
 
   def view(model: Model): Html[Msg] =
-    div(`class` := "container")(
+    div(`class` := "container-fluid", style := "padding: 10; margin: 0;")(
       TitleBar.view,
-      h1("Indigo Editor"),
-      button(onClick(Msg.BuildAndRun))("Build & Run")
+      div(cls := "row")(
+        div(cls := "col", style := "padding: 5px;")(
+          button(
+            cls := "btn btn-primary",
+            onClick(Msg.BuildAndRun)
+          )("Build & Run")
+        )
+      )
     )
 
   def subscriptions(model: Model): Sub[IO, Msg] =

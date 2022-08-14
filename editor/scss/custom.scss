@@ -6,4 +6,6 @@ $primary-color: #333;
 body {
   font: 1em $font-stack;
   color: $primary-color;
+  margin: 0;
+  padding: 0;
 }
