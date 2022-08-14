@@ -36,6 +36,11 @@ lazy val editor =
         "io.indigoengine" %%% "indigo-extras"     % Dependancies.indigoVersion,
         "io.indigoengine" %%% "indigo-json-circe" % Dependancies.indigoVersion
       ),
+      libraryDependencies ++= Seq(
+        "io.circe" %%% "circe-core",
+        "io.circe" %%% "circe-generic",
+        "io.circe" %%% "circe-parser"
+      ).map(_ % Dependancies.circeVersion),
       scalaJSLinkerConfig ~= { _.withModuleKind(ModuleKind.ESModule) }
     )
 
@@ -49,12 +54,16 @@ lazy val server =
         "org.http4s" %% "http4s-ember-client" % Dependancies.http4sVersion,
         "org.http4s" %% "http4s-circe"        % Dependancies.http4sVersion,
         "org.http4s" %% "http4s-dsl"          % Dependancies.http4sVersion,
-        "io.circe"   %% "circe-generic"       % Dependancies.circeVersion,
         "org.typelevel" %% "munit-cats-effect-3" % Dependancies.munitCatsEffectVersion % Test,
         "ch.qos.logback"   % "logback-classic" % Dependancies.logbackVersion,
         "io.indigoengine" %% "tyrian"          % Dependancies.tyrianVersion,
         "com.lihaoyi"     %% "os-lib"          % Dependancies.osLib
-      )
+      ),
+      libraryDependencies ++= Seq(
+        "io.circe" %% "circe-core",
+        "io.circe" %% "circe-generic",
+        "io.circe" %% "circe-parser"
+      ).map(_ % Dependancies.circeVersion)
     )
 
 // This is just here for reference for now. Should remove later.

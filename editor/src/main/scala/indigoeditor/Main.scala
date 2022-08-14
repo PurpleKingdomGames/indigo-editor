@@ -12,7 +12,7 @@ import scala.scalajs.js.annotation.*
 object Main extends TyrianApp[Msg, Model]:
 
   def init(flags: Map[String, String]): (Model, Cmd[IO, Msg]) =
-    (Model.init, Cmd.None)
+    (Model.initial, Cmd.None)
 
   def update(model: Model): Msg => (Model, Cmd[IO, Msg]) =
     case Msg.NoOp =>
@@ -30,7 +30,10 @@ object Main extends TyrianApp[Msg, Model]:
 
       val build =
         Http.send[IO, Response, Msg](
-          Request.get("http://localhost:12345/generate"),
+          Request.post(
+            "http://localhost:12345/generate",
+            Body.json(model.newProjectDetails.toJSON)
+          ),
           decoder
         )
 
@@ -51,30 +54,20 @@ object Main extends TyrianApp[Msg, Model]:
 
       (model, Logger.info(msg))
 
+    case Msg.ProjectNameChange(name) =>
+      (model.withName(name), Cmd.None)
+
+    case Msg.WidthChange(width) =>
+      (model.withWidth(width), Cmd.None)
+
+    case Msg.HeightChange(height) =>
+      (model.withHeight(height), Cmd.None)
+
   def view(model: Model): Html[Msg] =
     div(`class` := "container-fluid", style := "padding: 10; margin: 0;")(
-      TitleBar.view,
-      div(cls := "row")(
-        div(cls := "col", style := "padding: 5px;")(
-          button(
-            cls := "btn btn-primary",
-            onClick(Msg.BuildAndRun)
-          )("Build & Run")
-        )
-      )
+      TitleBar.view ::
+        NewProject.form
     )
 
   def subscriptions(model: Model): Sub[IO, Msg] =
     Sub.None
-
-final case class Model(serverResponse: String)
-
-object Model:
-  val init: Model =
-    Model("---")
-
-enum Msg:
-  case NoOp
-  case Log(message: String)
-  case BuildAndRun
-  case ServerResponse(code: Int, body: String)
