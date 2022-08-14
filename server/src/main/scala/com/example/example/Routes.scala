@@ -3,7 +3,12 @@ package com.example.example
 import cats.effect.Async
 import cats.implicits.*
 import fs2.io.file.Files
+import io.circe._
+import io.circe.generic.auto._
+import io.circe.parser._
+import io.circe.syntax._
 import org.http4s.Header
+import org.http4s.Headers
 import org.http4s.HttpRoutes
 import org.http4s.MediaType
 import org.http4s.StaticFile
@@ -49,15 +54,34 @@ object Routes:
           resp <- Ok(out.toHtml, `Content-Type`(MediaType.text.html))
         } yield resp
 
-      case GET -> Root / "generate" =>
+      case OPTIONS -> Root / "generate" =>
+        NoContent.headers(
+          Headers.empty.put(
+            Header.Raw(CIString("Access-Control-Allow-Origin"), "*"),
+            Header.Raw(CIString("Allow"), "OPTIONS, POST"),
+            Header.Raw(CIString("Accept"), "application/json"),
+            Header.Raw(CIString("Access-Control-Allow-Headers"), "Content-Type")
+          )
+        )
+
+      case req @ POST -> Root / "generate" =>
+        val settings: F[Option[NewProject]] =
+          req.bodyText.compile.string.map(s => decode[NewProject](s).toOption)
+
         for {
           t <- Async[F].realTime
-          b <- Generate.gen(buildPath)
-          r <- Ok(
-            s"$b. (at: $t)",
-            `Content-Type`(MediaType.text.plain),
-            Header.Raw(CIString("Access-Control-Allow-Origin"), "*")
-          )
+          j <- settings
+          b <- Generate.gen(buildPath, j)
+          r <-
+            j.map { s =>
+              Ok(
+                s"$b. (at: $t)",
+                `Content-Type`(MediaType.text.plain),
+                Header.Raw(CIString("Access-Control-Allow-Origin"), "*")
+              )
+            }.getOrElse {
+              BadRequest("The data supplied was invalid")
+            }
         } yield r
 
       case GET -> Root / "run" =>
@@ -65,9 +89,11 @@ object Routes:
           t <- Async[F].realTime
           b <- Run.run(buildPath)
           r <- Ok(
-            s"One day, this will run something. (at: $t)",
+            s"Running. (at: $t)",
             `Content-Type`(MediaType.text.plain),
             Header.Raw(CIString("Access-Control-Allow-Origin"), "*")
           )
         } yield r
     }
+
+final case class NewProject(name: String, width: Int, height: Int)

@@ -5,6 +5,7 @@ import tyrian.Html.*
 import tyrian.*
 import tyrian.cmds.Logger
 import tyrian.http.*
+
 import scala.scalajs.js.annotation.*
 
 final case class Model(newProjectDetails: NewProjectDetails):
