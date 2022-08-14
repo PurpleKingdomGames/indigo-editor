@@ -53,6 +53,7 @@ object Main extends TyrianApp[Msg, Model]:
 
   def view(model: Model): Html[Msg] =
     div(`class` := "container")(
+      TitleBar.view,
       h1("Indigo Editor"),
       button(onClick(Msg.BuildAndRun))("Build & Run")
     )
