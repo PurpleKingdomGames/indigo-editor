@@ -9,12 +9,18 @@ import tyrian.http.*
 import scala.scalajs.js.annotation.*
 
 @JSExportTopLevel("TyrianApp")
-object Main extends TyrianApp[Msg, Model]:
+object Main extends TyrianIOApp[Msg, Model]:
+
+  def router: Location => Msg =
+    _ => Msg.NoOp
 
   def init(flags: Map[String, String]): (Model, Cmd[IO, Msg]) =
     (Model(""), Cmd.None)
 
   def update(model: Model): Msg => (Model, Cmd[IO, Msg]) =
+    case Msg.NoOp =>
+      (model, Cmd.None)
+
     case Msg.SendText =>
       (model, HttpHelper.callSSR(model.text))
 
@@ -47,9 +53,10 @@ object Main extends TyrianApp[Msg, Model]:
     launch("myapp")
 
 enum Msg:
-  case SendText                  extends Msg
-  case NewContent(text: String)  extends Msg
-  case SSRResponse(html: String) extends Msg
+  case SendText
+  case NewContent(text: String)
+  case SSRResponse(html: String)
+  case NoOp
 
 final case class Model(text: String)
 

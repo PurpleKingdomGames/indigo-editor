@@ -6,7 +6,6 @@ import fs2.io.file.Files
 import io.circe._
 import io.circe.generic.auto._
 import io.circe.parser._
-import io.circe.syntax._
 import org.http4s.Header
 import org.http4s.Headers
 import org.http4s.HttpRoutes
@@ -15,9 +14,8 @@ import org.http4s.StaticFile
 import org.http4s.dsl.Http4sDsl
 import org.http4s.headers.`Content-Type`
 import org.typelevel.ci._
-import tyrian.Tyrian
 
-import java.io.File
+// import java.io.File
 
 object Routes:
 
@@ -30,14 +28,14 @@ object Routes:
     HttpRoutes.of[F] {
       case GET -> Root =>
         Ok(
-          Tyrian.render(true, HomePage.page),
+          tyrian.DOCTYPE + HomePage.page,
           `Content-Type`(MediaType.text.html)
         )
 
       case request @ GET -> Root / "spa.js" =>
         val spa = fs2.io.file.Path(
           "."
-        ) / "spa" / "target" / "scala-3.1.3" / "scalajs-bundler" / "main" / "spa-fastopt-bundle.js"
+        ) / "spa" / "target" / "scala-3.3.1" / "scalajs-bundler" / "main" / "spa-fastopt-bundle.js"
         StaticFile
           .fromPath(spa.absolute, Some(request))
           .getOrElseF(NotFound(spa.absolute.toString))

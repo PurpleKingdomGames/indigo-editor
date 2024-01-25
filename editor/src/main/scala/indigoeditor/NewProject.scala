@@ -30,7 +30,7 @@ object NewProject:
               cls         := "form-control",
               min := 0,
               max := 4096,
-              value := 550,
+              value := "550",
               onInput(v => Msg.WidthChange(v.toInt))
             )
           )
@@ -45,7 +45,7 @@ object NewProject:
               cls         := "form-control",
               min := 0,
               max := 4096,
-              value := 400,
+              value := "400",
               onInput(v => Msg.HeightChange(v.toInt))
             )
           )

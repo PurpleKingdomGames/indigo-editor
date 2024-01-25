@@ -9,7 +9,10 @@ import tyrian.http.*
 import scala.scalajs.js.annotation.*
 
 @JSExportTopLevel("TyrianApp")
-object Main extends TyrianApp[Msg, Model]:
+object Main extends TyrianIOApp[Msg, Model]:
+
+  def router: Location => Msg =
+    _ => Msg.NoOp
 
   def init(flags: Map[String, String]): (Model, Cmd[IO, Msg]) =
     (Model.initial, Cmd.None)

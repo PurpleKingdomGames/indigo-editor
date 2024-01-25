@@ -7,7 +7,7 @@ Global / onChangedBuildSource := ReloadOnSourceChanges
 
 ThisBuild / scalafixDependencies += "com.github.liancheng" %% "organize-imports" % "0.5.0"
 
-lazy val scala3Version = "3.1.3"
+lazy val scala3Version = "3.3.1"
 
 lazy val commonSettings: Seq[sbt.Def.Setting[_]] = Seq(
   version      := "0.0.1",
@@ -31,7 +31,7 @@ lazy val editor =
       name := "editor",
       libraryDependencies ++= Seq(
         "io.indigoengine" %%% "tyrian-io" % Dependancies.tyrianVersion,
-        "io.indigoengine" %%% "tyrian-indigo-bridge" % Dependancies.tyrianVersion,
+        "io.indigoengine" %%% "tyrian-indigo-bridge" % Dependancies.indigoVersion,
         "io.indigoengine" %%% "indigo"            % Dependancies.indigoVersion,
         "io.indigoengine" %%% "indigo-extras"     % Dependancies.indigoVersion,
         "io.indigoengine" %%% "indigo-json-circe" % Dependancies.indigoVersion
@@ -102,9 +102,9 @@ lazy val indigoEditorProject =
     .settings(
       logo := s"Indigo Editor (v${version.value})",
       usefulTasks := Seq(
-        UsefulTask("b", "editor/fastLinkJS", "Build the editor frontend"),
-        UsefulTask("start", "server/run", "Run the editor service"),
-        UsefulTask("", "code", "Launch VSCode")
+        UsefulTask("editor/fastLinkJS", "Build the editor frontend").alias("b"),
+        UsefulTask("server/run", "Run the editor service").alias("start"),
+        UsefulTask("code", "Launch VSCode").alias("code")
       ),
       logoColor        := scala.Console.MAGENTA,
       aliasColor       := scala.Console.BLUE,

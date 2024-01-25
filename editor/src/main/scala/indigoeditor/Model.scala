@@ -1,12 +1,12 @@
 package indigoeditor
 
-import cats.effect.IO
-import tyrian.Html.*
-import tyrian.*
-import tyrian.cmds.Logger
-import tyrian.http.*
+// import cats.effect.IO
+// import tyrian.Html.*
+// import tyrian.*
+// import tyrian.cmds.Logger
+// import tyrian.http.*
 
-import scala.scalajs.js.annotation.*
+// import scala.scalajs.js.annotation.*
 
 final case class Model(newProjectDetails: NewProjectDetails):
   def withName(newName: String): Model =
@@ -37,7 +37,7 @@ final case class NewProjectDetails(
     this.copy(height = newHeight)
 
   def toJSON: String = {
-    import io.circe._, io.circe.generic.auto._, io.circe.parser._, io.circe.syntax._
+    import io.circe._, io.circe.generic.auto._, io.circe.syntax._
     this.asJson.noSpaces
   }
 

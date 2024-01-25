@@ -4,30 +4,37 @@ import mill.scalalib._
 import mill.scalajslib._
 import mill.scalajslib.api._
 
-import $ivy.`io.indigoengine::mill-indigo:0.13.1-SNAPSHOT`, millindigo._
+import $ivy.`io.indigoengine::mill-indigo:0.16.0`, millindigo._
 
 import indigoplugin.ElectronInstall
 
 import $file.indigoutils
 
 object mygame extends ScalaJSModule with MillIndigo {
-  def scalaVersion   = "3.1.3"
-  def scalaJSVersion = "1.10.1"
+  def scalaVersion   = "3.3.1"
+  def scalaJSVersion = "1.15.0"
 
-  val gameAssetsDirectory: os.Path     = os.pwd / "assets"
-  val showCursor: Boolean              = true
-  val title: String                    = indigoutils.title // "My Game - Made with Indigo"
-  val windowStartWidth: Int            = indigoutils.width // 550
-  val windowStartHeight: Int           = indigoutils.height // 400
-  val disableFrameRateLimit: Boolean   = false
-  val electronInstall: ElectronInstall = ElectronInstall.Version("^18.0.0")
-  val backgroundColor: String          = "black"
+  val indigoOptions: IndigoOptions =
+    IndigoOptions.defaults
+      .withTitle(indigoutils.title)
+      .withWindowSize(indigoutils.width, indigoutils.height)
+      .withBackgroundColor("black")
+      .withAssetDirectory(os.RelPath.rel / "assets")
+      .excludeAssets {
+        case p if p.endsWith(os.RelPath.rel / ".gitkeep") => true
+        case _                                            => false
+      }
+
+  val indigoGenerators: IndigoGenerators =
+    IndigoGenerators("mygame.generated")
+      .generateConfig("Config", indigoOptions)
+      // .listAssets("Assets", indigoOptions.assets)
 
   def buildGame() =
     T.command {
       T {
         compile()
-        fastOpt()
+        fastLinkJS()
         indigoBuild()()
       }
     }
@@ -36,12 +43,12 @@ object mygame extends ScalaJSModule with MillIndigo {
     T.command {
       T {
         compile()
-        fastOpt()
+        fastLinkJS()
         indigoRun()()
       }
     }
 
-  val indigoVersion = "0.13.1-SNAPSHOT"
+  val indigoVersion = "0.16.0"
 
   def ivyDeps =
     Agg(
@@ -50,9 +57,7 @@ object mygame extends ScalaJSModule with MillIndigo {
       ivy"io.indigoengine::indigo-extras::$indigoVersion"
     )
 
-  def scalacOptions = super.scalacOptions() ++ ScalacOptions.compile
-
-  object test extends Tests {
+  object test extends ScalaJSTests {
     def ivyDeps = Agg(
       ivy"org.scalameta::munit::0.7.29"
     )
@@ -60,43 +65,6 @@ object mygame extends ScalaJSModule with MillIndigo {
     def testFramework = "munit.Framework"
 
     override def moduleKind = T(mill.scalajslib.api.ModuleKind.CommonJSModule)
-    override def jsEnvConfig = T(
-      JsEnvConfig.NodeJs(args = List("--dns-result-order=ipv4first"))
-    )
-
-    def scalacOptions = super.scalacOptions() ++ ScalacOptions.test
   }
-
-}
-
-object ScalacOptions {
-
-  lazy val compile: Seq[String] =
-    Seq(
-      "-deprecation", // Emit warning and location for usages of deprecated APIs.
-      "-encoding",
-      "utf-8", // Specify character encoding used by source files.
-      "-feature", // Emit warning and location for usages of features that should be imported explicitly.
-      "-language:existentials", // Existential types (besides wildcard types) can be written and inferred
-      "-language:experimental.macros", // Allow macro definition (besides implementation and application)
-      "-language:higherKinds", // Allow higher-kinded types
-      "-language:implicitConversions", // Allow definition of implicit functions called views
-      "-unchecked", // Enable additional warnings where generated code depends on assumptions.
-      "-Xfatal-warnings" // Fail the compilation if there are any warnings.
-      // "-language:strictEquality"       // Scala 3 - Multiversal Equality
-    )
-
-  lazy val test: Seq[String] =
-    Seq(
-      "-deprecation", // Emit warning and location for usages of deprecated APIs.
-      "-encoding",
-      "utf-8", // Specify character encoding used by source files.
-      "-feature", // Emit warning and location for usages of features that should be imported explicitly.
-      "-language:existentials", // Existential types (besides wildcard types) can be written and inferred
-      "-language:experimental.macros", // Allow macro definition (besides implementation and application)
-      "-language:higherKinds", // Allow higher-kinded types
-      "-language:implicitConversions", // Allow definition of implicit functions called views
-      "-unchecked" // Enable additional warnings where generated code depends on assumptions.
-    )
 
 }

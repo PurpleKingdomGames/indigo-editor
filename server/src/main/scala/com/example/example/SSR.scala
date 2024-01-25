@@ -2,7 +2,6 @@ package com.example.example
 
 import cats.Applicative
 import cats.implicits.*
-import org.http4s.EntityEncoder
 import tyrian.Html.*
 import tyrian.*
 
@@ -18,16 +17,16 @@ object SSR:
 
   def impl[F[_]: Applicative]: SSR[F] = new SSR[F]:
     def render(in: SSR.Input): F[SSR.Output] =
-      val html = Tyrian.render(
+      val html = 
         div(styles)(
           topLine,
           p(text("Was sent the following: " + in.toString))
-        )
-      )
+        ).render
+
       (SSR.Output(html)).pure[F]
 
     def render: F[SSR.Output] =
-      val html = Tyrian.render(div(styles)(topLine))
+      val html = div(styles)(topLine).render
       (SSR.Output(html)).pure[F]
 
   opaque type Input = String

@@ -57,17 +57,17 @@ object EmptyScene extends Scene[Unit, Unit, Unit] {
   val subSystems: Set[SubSystem] =
     Set()
 
-  def updateModel(context: FrameContext[Unit], model: Unit): GlobalEvent => Outcome[Unit] =
+  def updateModel(context: SceneContext[Unit], model: Unit): GlobalEvent => Outcome[Unit] =
     _ => Outcome(model)
 
   def updateViewModel(
-      context: FrameContext[Unit],
+      context: SceneContext[Unit],
       model: Unit,
       viewModel: Unit
   ): GlobalEvent => Outcome[Unit] =
     _ => Outcome(viewModel)
 
-  def present(context: FrameContext[Unit], model: Unit, viewModel: Unit): Outcome[SceneUpdateFragment] =
+  def present(context: SceneContext[Unit], model: Unit, viewModel: Unit): Outcome[SceneUpdateFragment] =
     Outcome(
       SceneUpdateFragment(
         Shape.Box(Rectangle(5, 5, 50, 50), Fill.Color(RGBA.Green.withAlpha(0.5)), Stroke(1, RGBA.Green))
